@@ -25,7 +25,7 @@ class Formulas
 {
 
 public:
-    vector<int> data = {
+    vector<float> data = {
         106, 107, 76, 82, 109, 107, 115, 93, 187, 95, 123, 125,
         111, 92, 86, 70, 126, 68, 130, 129, 139, 119, 115, 128,
         100, 186, 84, 99, 113, 204, 111, 141, 136, 123, 90, 115,
@@ -97,7 +97,13 @@ public:
         }
     };
 
+    void defaultData(){
+        Intervals.clear();
+        makingIntervals(data);
+    }
+
     void userInputData(){
+        Intervals.clear();
         int amount;
         cout << "Enter the amount of data : ";
         cin >> amount;
@@ -131,20 +137,57 @@ public:
 int main()
 {   
     int totalIntervals;
-    cout << "How many intervals of data do you want to make? : ";
-    cin >> totalIntervals;
-    Formulas f(totalIntervals);
-    f.userInputData();
-    f.display();    
+    int choice;
+  
     
-    // int choice;
-    // cout << "1) Default Data";
-    // cout << "2) Input Data";
-   
+    // cout << "1) Grouped Data";
+    // cout << "2) Ungrouped Data";
+
     // cout << "Enter your choice : ";
     // cin >> choice;
     
-   
+    
+    
+
+    while (true)
+    {
+
+        cout << "0) To exit Program" << endl;
+        cout << "1) Default Data" <<  endl;
+        cout << "2) Input Data" << endl;
+        cout << "Enter your choice : ";
+        cin >> choice;
+        
+        if (choice == 1)
+        {
+            Formulas f(totalIntervals);
+            f.defaultData();
+            f.display();
+        
+        }
+        else if (choice == 2)
+        {
+            cout << "How many intervals of data do you want to make? : ";
+            cin >> totalIntervals;
+            Formulas f(totalIntervals);
+            f.userInputData();
+            f.display();
+        }
+        else if(choice == 0){
+            cout << "Khuda Hafiz Program changa lagya te review ker deyo hamza nu" << endl;
+            return false;
+        }
+        else
+        {
+            cout << "vekh ke input ker choice vicho!!!";
+            continue;
+        }
+        
+    }
+    
+  
+    
+    
 
     
    
