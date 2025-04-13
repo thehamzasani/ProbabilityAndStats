@@ -128,6 +128,7 @@ public:
     };
 
     void display(){
+        cout << "------------------------------------------------------------------------" << endl;
         cout << "Frequency Distribution:\n";
         cout << "Interval\tFrequency\tMidpoint\tEntries\n";
         for (const auto& interval : Intervals) {
@@ -139,6 +140,8 @@ public:
             }
             cout << endl;
         }
+        cout << "------------------------------------------------------------------------" << endl;
+
     }
 
     void takingUngroupData(){
@@ -283,6 +286,122 @@ class Formulas : public TakingData{
         return L + ((f1 - f0)/((2*f1)-f0-f2)) * h;
 
     };
+
+    float geometricMeanUngrouped() {
+        takingUngroupData();
+        float logSum = 0.0;
+        for (float x : userData) {
+            logSum += log(x);  
+        }
+        float meanLog = logSum / userData.size();
+        return exp(meanLog);  
+    }
+
+    float geometricMeanGrouped() {
+        takingGroupedData();
+        float logSum = 0.0;
+        int totalFreq = 0;
+    
+        for (auto interval : Intervals) {
+            float midpoint = (interval.lowerLimit + interval.upperLimit) / 2;
+            logSum += interval.frequency * log(midpoint);
+            totalFreq += interval.frequency;
+        }
+    
+        return exp(logSum / totalFreq);
+    }
+
+    float harmonicMeanUngrouped(){
+        takingUngroupData();
+        double sumReciprocal = 0;
+
+        for (int i = 0; i < userData.size(); i++) {
+        sumReciprocal += 1.0 / userData[i];  
+    }
+
+    return userData.size() / sumReciprocal;
+    }
+
+    float harmonicMeanGrouped(){
+        takingGroupedData();
+        double totalFreq = 0, sumReciprocalFreq = 0;
+
+        for (int i = 0; i < Intervals.size(); i++) {
+        
+
+        double midpoint = (Intervals[i].lowerLimit + Intervals[i].upperLimit ) / 2.0;
+        sumReciprocalFreq += Intervals[i].frequency  * (1.0 / midpoint);  // f_i * (1 / midpoint)
+        totalFreq += Intervals[i].frequency;
+    }
+
+    return totalFreq / sumReciprocalFreq;
+    }
+
+    float meanDeviationOfUngroupedData() {
+        float mean = meanOfUngroupedData();
+        float sumOfDeviations = 0;
+        for (int i = 0; i < userData.size(); i++) {
+            sumOfDeviations += abs(userData[i] - mean); 
+        }
+        return sumOfDeviations / userData.size();
+    }
+
+    float meanDeviationOfUngroupedDataUsingMedian() {
+
+        float median = medianOfUngroupedData();
+    
+
+        float sumOfDeviations = 0;
+        for (int i = 0; i < userData.size(); i++) {
+            sumOfDeviations += abs(userData[i] - median); 
+        }
+
+        return sumOfDeviations / userData.size();
+    }
+
+    float meanDeviationOfGroupedData() {
+        float mean = meanOfGroupedData();
+        double sumF = 0, sumAbsDeviations = 0;
+        for (auto interval : Intervals) {
+            sumAbsDeviations += interval.frequency * abs(interval.midpoint - mean);
+            sumF += interval.frequency;
+        }
+        return sumAbsDeviations / sumF;
+    }
+
+    float meanDeviationOfGroupedDataUsingMedian() {
+        float median = medianOfGroupedData();
+        double sumF = 0, sumAbsDeviations = 0;
+        for (auto interval : Intervals) {
+            sumAbsDeviations += interval.frequency * abs(interval.midpoint - median);
+            sumF += interval.frequency;
+        }
+        return sumAbsDeviations / sumF;
+    }
+
+    float coefficientOfMeanDeviationUsingMeanUngroupedData() {
+        float meanDeviation = meanDeviationOfUngroupedData();
+        float mean = meanOfUngroupedData();
+        return (meanDeviation / mean) * 100;
+    }
+    
+    float coefficientOfMeanDeviationUsingMedianUngroupedData() {
+        float meanDeviation = meanDeviationOfUngroupedDataUsingMedian();
+        float median = medianOfUngroupedData();
+        return (meanDeviation / median) * 100;
+    }
+
+    float coefficientMDGroupedUsingMean() {
+        float md = meanDeviationOfGroupedData();
+        float mean = meanOfGroupedData();
+        return (md / mean) * 100;
+    }
+    
+    float coefficientMDGroupedUsingMedian() {
+        float md = meanDeviationOfGroupedDataUsingMedian();
+        float median = medianOfGroupedData();
+        return (md / median) * 100;
+    }
 };
 
 
@@ -298,7 +417,10 @@ int main()
         cout << "2) Find Median" << endl;
         cout << "3) Find Mode" << endl;
         cout << "4) Find Geometric Mean" << endl;
-        cout << "5) Built Frequency Distribution Table" << endl;
+        cout << "5) Find Harmonic Mean" << endl;
+        cout << "6) Built Frequency Distribution Table" << endl;
+        cout << "7) Find Mean Deviation" << endl;
+        cout << "8) Find cofficient of Mean Deviation" << endl;
         cout << "Enter your choice : ";
         cin >> choice;
         if (choice==1)
@@ -393,16 +515,117 @@ int main()
                 mode = f.modeOfUngroupedData();
                 cout << "Mode : " << mode << endl;            
             }
-            
-            
-
         }
         else if (choice==4)
+        {
+            cout << "1) Grouped Data   | " << endl;
+            cout << "2) Ungrouped Data " << endl;
+            cout << "Enter your choice : ";
+            cin >> choice; 
+            if (choice==1)
+            {
+                float geometricMean;
+                Formulas f;  
+                geometricMean = f.geometricMeanGrouped();
+                f.display();
+                cout << "Geometric Mean : " << geometricMean << endl;
+            }
+            else if (choice==2)
+            {
+                float geometricMean;
+                Formulas f;  
+                geometricMean = f.geometricMeanUngrouped();
+                cout << "Geometric Mean : " << geometricMean << endl;
+            }
+            
+            
+        }
+        else if (choice==5)
+        {
+            cout << "1) Grouped Data   | " << endl;
+            cout << "2) Ungrouped Data " << endl;
+            cout << "Enter your choice : ";
+            cin >> choice; 
+            if (choice==1)
+            {
+                float harmonicMean;
+                Formulas f;  
+                harmonicMean = f.harmonicMeanGrouped();
+                f.display();
+                cout << "Geometric Mean : " << harmonicMean << endl;
+            }
+            else if (choice==2)
+            {
+                float harmonicMean;
+                Formulas f;  
+                harmonicMean = f.harmonicMeanUngrouped();
+                cout << "Geometric Mean : " << harmonicMean << endl;
+            }
+        }     
+        else if (choice==6)
+        {
+            Formulas f;
+            f.takingGroupedData();
+            f.display();
+        }
+        else if (choice==7)
+        {
+            cout << "1) Grouped Data   | " << endl;
+            cout << "2) Ungrouped Data " << endl;
+            cout << "Enter your choice : ";
+            cin >> choice; 
+            if (choice==1)
+            {
+                int choice;
+                cout << "1) Using Mean" << endl;
+                cout << "2) Using Median" << endl;
+                if (choice==1)
+                {
+                    float meanDeviation;
+                    Formulas f;  
+                    meanDeviation = f.meanDeviationOfUngroupedData();
+                    cout << "Mean Deviation : " << meanDeviation << endl;
+                }
+                else if (choice==2)
+                {
+                    float meanDeviation;
+                    Formulas f;  
+                    meanDeviation = f.meanDeviationOfUngroupedDataUsingMedian();
+                    cout << "Mean Deviation : " << meanDeviation << endl;
+                }
+            }
+            else if (choice==2)
+            {
+                int choice;
+                cout << "1) Using Mean" << endl;
+                cout << "2) Using Median" << endl;
+                if (choice==1)
+                {
+                    float meanDeviation;
+                    Formulas f;  
+                    meanDeviation = f.meanDeviationOfGroupedData();
+                    cout << "Mean Deviation : " << meanDeviation << endl;
+                }
+                else if (choice==2)
+                {
+                    float meanDeviation;
+                    Formulas f;  
+                    meanDeviation = f.meanDeviationOfGroupedDataUsingMedian();
+                    cout << "Mean Deviation : " << meanDeviation << endl;
+                }
+            }
+        }
+        else if (choice==8)
         {
             
         }
         
-        
+        else
+        {
+            cout << "Bhaji vekh ke enter kero";
+            return true;
+        }
+          
     }
     
 
